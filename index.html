@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Snake</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%8D%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Press+Start+2P&family=Rubik:wght@400;500;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="bar">
+      <div class="logo">SNAKE</div>
+      <div class="bar-actions">
+        <button type="button" class="icon-btn" id="btn-pause" title="Pause (Space)" aria-label="Pause" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/><path class="i-play" d="M8 5l11 7-11 7z"/></svg>
+        </button>
+        <button type="button" class="icon-btn" id="btn-sound" title="Sound (M)" aria-label="Sound on or off">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="i-on" d="M15 8.5a5 5 0 0 1 0 7M17.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="i-off" d="M15.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" class="icon-btn" id="btn-theme" title="Next theme (T)" aria-label="Next theme">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-.9 2-1.8 0-1.200-1-1.500-1-2.700 0-1 .8-1.500 1.800-1.500H17a4 4 0 0 0 4-4c0-4.400-4-8-9-8zM7.500 12.500a1.500 1.500 0 1 1 0-3 1.500 1.500 0 0 1 0 3zm3-4.500a1.500 1.500 0 1 1 0-3 1.500 1.500 0 0 1 0 3zm5 0a1.500 1.500 0 1 1 0-3 1.500 1.500 0 0 1 0 3z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="hud" aria-live="off">
+      <div class="stat stat-main">
+        <span class="stat-label">Score</span>
+        <span class="stat-value" id="score">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Best</span>
+        <span class="stat-value" id="best">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Level</span>
+        <span class="stat-value" id="level">1</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Length</span>
+        <span class="stat-value" id="length">3</span>
+      </div>
+    </section>
+
+    <div class="meters">
+      <div class="combo" id="combo">
+        <span class="combo-label" id="combo-label">COMBO</span>
+        <div class="combo-track"><div class="combo-fill" id="combo-fill"></div></div>
+      </div>
+      <div class="combo boost" id="boost" title="Double-tap a direction, or press Shift: 10 seconds of boost, a minute to refill">
+        <span class="combo-label">BOOST</span>
+        <div class="combo-track"><div class="combo-fill boost-fill" id="boost-fill"></div></div>
+      </div>
+    </div>
+
+    <div class="board" id="board">
+      <canvas id="canvas" aria-label="Snake game board"></canvas>
+
+      <div class="overlay" id="screen-menu">
+        <h1 class="title">SNAKE</h1>
+        <p class="tagline">Eat. Grow. Don't bite yourself.</p>
+
+        <div class="options">
+          <div class="option">
+            <span class="option-label">Mode</span>
+            <div class="segment" role="group" aria-label="Mode">
+              <button type="button" data-mode="classic">Classic</button>
+              <button type="button" data-mode="wrap">No walls</button>
+            </div>
+          </div>
+          <div class="option">
+            <span class="option-label">Speed</span>
+            <div class="segment" role="group" aria-label="Speed">
+              <button type="button" data-speed="chill">Chill</button>
+              <button type="button" data-speed="normal">Normal</button>
+              <button type="button" data-speed="turbo">Turbo</button>
+            </div>
+          </div>
+          <div class="option">
+            <span class="option-label">Theme</span>
+            <div class="segment" role="group" aria-label="Theme">
+              <button type="button" data-theme-pick="neon">Neon</button>
+              <button type="button" data-theme-pick="candy">Candy</button>
+              <button type="button" data-theme-pick="nokia">Nokia</button>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="btn-play">Play <kbd>Enter</kbd></button>
+        <p class="menu-best">Best in this mode: <strong id="menu-best">0</strong></p>
+      </div>
+
+      <div class="overlay" id="screen-paused" hidden>
+        <h2 class="overlay-title">Paused</h2>
+        <div class="btn-col">
+          <button type="button" class="btn btn-primary" id="btn-resume">Resume <kbd>Space</kbd></button>
+          <button type="button" class="btn" id="btn-restart">Restart <kbd>R</kbd></button>
+          <button type="button" class="btn" id="btn-menu-paused">Menu <kbd>Esc</kbd></button>
+        </div>
+      </div>
+
+      <div class="overlay overlay-clear" id="screen-countdown" hidden>
+        <div class="count" id="count">3</div>
+      </div>
+
+      <div class="overlay" id="screen-over" hidden>
+        <div class="badge" id="new-best" hidden>New best!</div>
+        <h2 class="overlay-title" id="over-title">Game over</h2>
+        <p class="over-reason" id="over-reason"></p>
+        <div class="final" id="final-score">0</div>
+        <div class="results">
+          <div><span>Best</span><strong id="r-best">0</strong></div>
+          <div><span>Length</span><strong id="r-length">3</strong></div>
+          <div><span>Time</span><strong id="r-time">0:00</strong></div>
+          <div><span>Max combo</span><strong id="r-combo">×1</strong></div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary" id="btn-again">Play again <kbd>Enter</kbd></button>
+          <button type="button" class="btn" id="btn-menu-over">Menu <kbd>Esc</kbd></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dpad" aria-label="Direction buttons">
+      <button type="button" data-dir="up" aria-label="Up">&#9650;</button>
+      <button type="button" data-dir="left" aria-label="Left">&#9664;</button>
+      <button type="button" data-dir="down" aria-label="Down">&#9660;</button>
+      <button type="button" data-dir="right" aria-label="Right">&#9654;</button>
+      <button type="button" data-boost aria-label="Boost">&#9889;</button>
+    </div>
+
+    <footer class="help">
+      <span><kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> / <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move</span>
+      <span>same arrow twice / <kbd>Shift</kbd> boost</span>
+      <span><kbd>Space</kbd> pause</span>
+      <span><kbd>M</kbd> sound</span>
+      <span><kbd>T</kbd> theme</span>
+    </footer>
+  </div>
+
+  <script src="js/core.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

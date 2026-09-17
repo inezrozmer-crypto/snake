@@ -1,0 +1,757 @@
+/* ---- themes ------------------------------------------------------------ */
+
+:root,
+:root[data-theme="neon"] {
+  --page: #060918;
+  --page-glow-a: rgba(34, 230, 200, 0.16);
+  --page-glow-b: rgba(255, 79, 216, 0.14);
+  --ink: #eaf0ff;
+  --muted: #8794c4;
+  --panel: rgba(255, 255, 255, 0.06);
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --accent: #22e6c8;
+  --accent-2: #ff4fd8;
+  --on-accent: #04121a;
+  --overlay: rgba(6, 9, 24, 0.72);
+  --board-shadow: 0 0 0 1px rgba(34, 230, 200, 0.25), 0 20px 60px rgba(34, 230, 200, 0.18);
+  --font-display: "Bungee", "Rubik", "Segoe UI", sans-serif;
+  --font-body: "Rubik", "Segoe UI", system-ui, sans-serif;
+  --radius: 14px;
+}
+
+:root[data-theme="candy"] {
+  --page: #fff1f6;
+  --page-glow-a: rgba(255, 111, 156, 0.2);
+  --page-glow-b: rgba(95, 214, 160, 0.22);
+  --ink: #3a2a4d;
+  --muted: #9a86ad;
+  --panel: #ffffff;
+  --panel-border: rgba(58, 42, 77, 0.08);
+  --accent: #ff6f9c;
+  --accent-2: #5fd6a0;
+  --on-accent: #ffffff;
+  --overlay: rgba(255, 241, 246, 0.8);
+  --board-shadow: 0 0 0 1px rgba(255, 111, 156, 0.25), 0 20px 50px rgba(255, 111, 156, 0.25);
+}
+
+:root[data-theme="nokia"] {
+  --page: #1d2530;
+  --page-glow-a: rgba(199, 240, 216, 0.07);
+  --page-glow-b: rgba(199, 240, 216, 0.04);
+  --ink: #dbe7dc;
+  --muted: #8296a0;
+  --panel: #283341;
+  --panel-border: #3a4858;
+  --accent: #c7f0d8;
+  --accent-2: #c7f0d8;
+  --on-accent: #2a3427;
+  --overlay: rgba(199, 240, 216, 0.88);
+  --board-shadow: 0 0 0 10px #10161d, 0 0 0 12px #3a4858, 0 24px 50px rgba(0, 0, 0, 0.5);
+  --font-display: "Press Start 2P", "Courier New", monospace;
+  --radius: 4px;
+}
+
+/* ---- page -------------------------------------------------------------- */
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  padding: 14px 16px 18px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--ink);
+  font-family: var(--font-body);
+  background:
+    radial-gradient(60vmax 60vmax at 10% 0%, var(--page-glow-a), transparent 60%),
+    radial-gradient(60vmax 60vmax at 100% 100%, var(--page-glow-b), transparent 60%),
+    var(--page);
+  background-attachment: fixed;
+  transition: background-color 0.3s, color 0.3s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* as wide as possible while the square board still fits the window */
+  width: min(100%, 560px, calc(100vh - 255px));
+  width: min(100%, 560px, calc(100dvh - 255px));
+  min-width: min(100%, 280px);
+  margin: auto 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 1.7em;
+  padding: 1px 5px;
+  border-radius: 5px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  font-family: var(--font-body);
+  font-size: 0.72em;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* ---- top bar ----------------------------------------------------------- */
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: 0.06em;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+:root[data-theme="nokia"] .logo {
+  font-size: 1.05rem;
+}
+
+.bar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--panel);
+  transition: transform 0.12s, border-color 0.2s, opacity 0.2s;
+}
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.icon-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.icon-btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.i-play,
+.is-paused .i-pause {
+  display: none;
+}
+
+.is-paused .i-play {
+  display: inline;
+}
+
+.i-off,
+.is-muted .i-on {
+  display: none;
+}
+
+.is-muted .i-off {
+  display: inline;
+}
+
+/* ---- HUD --------------------------------------------------------------- */
+
+.hud {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  min-width: 0;
+}
+
+.stat-label {
+  font-size: 0.64rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-main .stat-value {
+  font-size: 1.6rem;
+  color: var(--accent);
+  transform-origin: left center;
+}
+
+.stat-value.bump {
+  animation: bump 0.25s ease-out;
+}
+
+@keyframes bump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+
+.meters {
+  display: flex;
+  gap: 16px;
+}
+
+.combo {
+  flex: 1.4;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 16px;
+  opacity: 0.35;
+  transition: opacity 0.2s;
+}
+
+.combo.is-live {
+  opacity: 1;
+}
+
+.combo-label {
+  flex: none;
+  min-width: 78px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.combo.is-live .combo-label {
+  color: var(--accent-2);
+}
+
+.combo-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  overflow: hidden;
+}
+
+/* boost tank: full and bright when ready, dim while it is too empty to use */
+.combo.boost {
+  flex: 1;
+  opacity: 1;
+}
+
+.combo.boost .combo-label {
+  min-width: 50px;
+  color: var(--ink);
+}
+
+.combo.boost.is-low {
+  opacity: 0.4;
+}
+
+.combo.boost.is-on .combo-label {
+  color: var(--accent);
+}
+
+.combo.boost.is-on .combo-track {
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+.boost-fill.combo-fill {
+  background: var(--accent);
+  transform: scaleX(1);
+}
+
+.combo-fill {
+  width: 100%;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* ---- board and overlays ------------------------------------------------ */
+
+.board {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--board-shadow);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+:root[data-theme="nokia"] .board {
+  margin: 12px 0;
+  width: calc(100% - 24px);
+  align-self: center;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 2.2%, 14px);
+  padding: 4%;
+  text-align: center;
+  background: var(--overlay);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  overflow-y: auto;
+  animation: fade-in 0.2s ease-out;
+}
+
+.overlay-clear {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  pointer-events: none;
+}
+
+:root[data-theme="nokia"] .overlay {
+  color: #2a3427;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 13vmin, 4.4rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: slide 5s linear infinite;
+}
+
+:root[data-theme="neon"] .title {
+  filter: drop-shadow(0 0 18px rgba(34, 230, 200, 0.45));
+}
+
+:root[data-theme="nokia"] .title {
+  font-size: clamp(1.4rem, 8vmin, 2.6rem);
+  background: none;
+  color: #2a3427;
+  animation: none;
+}
+
+@keyframes slide {
+  to { background-position: 200% 0; }
+}
+
+.tagline {
+  margin: 0;
+  font-size: clamp(0.75rem, 2.6vmin, 0.95rem);
+  color: var(--muted);
+}
+
+:root[data-theme="nokia"] .tagline,
+:root[data-theme="nokia"] .option-label,
+:root[data-theme="nokia"] .menu-best,
+:root[data-theme="nokia"] .over-reason,
+:root[data-theme="nokia"] .results span {
+  color: #55664f;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(5px, 1.6vmin, 9px);
+  width: min(100%, 360px);
+  margin: clamp(2px, 1vmin, 8px) 0;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.option-label {
+  flex: none;
+  width: 52px;
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.segment {
+  flex: 1;
+  display: flex;
+  padding: 3px;
+  border: 1px solid var(--panel-border);
+  border-radius: 99px;
+  background: var(--panel);
+}
+
+.segment button {
+  flex: 1;
+  padding: clamp(4px, 1.3vmin, 7px) 4px;
+  border: 0;
+  border-radius: 99px;
+  background: transparent;
+  font-size: clamp(0.72rem, 2.4vmin, 0.85rem);
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.segment button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+:root[data-theme="nokia"] .segment {
+  border-color: #43523d;
+  border-radius: 4px;
+  background: transparent;
+}
+
+:root[data-theme="nokia"] .segment button {
+  border-radius: 2px;
+  color: #2a3427;
+}
+
+:root[data-theme="nokia"] .segment button[aria-pressed="true"] {
+  background: #43523d;
+  color: #c7f0d8;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: clamp(7px, 2vmin, 11px) 22px;
+  border: 1px solid var(--panel-border);
+  border-radius: 99px;
+  background: var(--panel);
+  font-size: clamp(0.85rem, 2.8vmin, 1rem);
+  font-weight: 700;
+  transition: transform 0.12s, filter 0.15s, border-color 0.2s;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  border: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: var(--on-accent);
+  box-shadow: 0 6px 22px -6px var(--accent);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.btn kbd {
+  border-color: transparent;
+  background: rgba(0, 0, 0, 0.16);
+  color: inherit;
+}
+
+:root[data-theme="nokia"] .btn {
+  border: 2px solid #43523d;
+  border-radius: 4px;
+  background: transparent;
+  color: #2a3427;
+  box-shadow: none;
+}
+
+:root[data-theme="nokia"] .btn-primary {
+  background: #43523d;
+  color: #c7f0d8;
+}
+
+.btn-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 200px;
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.menu-best {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.menu-best strong {
+  color: var(--ink);
+}
+
+:root[data-theme="nokia"] .menu-best strong {
+  color: #2a3427;
+}
+
+.overlay-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 7vmin, 2.4rem);
+  letter-spacing: 0.04em;
+}
+
+:root[data-theme="nokia"] .overlay-title {
+  font-size: clamp(1rem, 5vmin, 1.5rem);
+}
+
+.over-reason {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.final {
+  font-size: clamp(2.6rem, 14vmin, 4.6rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+:root[data-theme="nokia"] .final {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 9vmin, 3rem);
+  color: #2a3427;
+}
+
+.results {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 6px clamp(12px, 4vmin, 26px);
+  margin: 4px 0 8px;
+}
+
+.results div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.results span {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.results strong {
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.badge {
+  padding: 5px 14px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #ffd34d, #ff9d2e);
+  color: #3b2300;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  animation: pop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+@keyframes pop {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+.count {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 28vmin, 9rem);
+  line-height: 1;
+  color: var(--ink);
+  text-shadow: 0 0 30px var(--accent), 0 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.count.tick {
+  animation: count 0.45s ease-out;
+}
+
+:root[data-theme="nokia"] .count {
+  color: #2a3427;
+  text-shadow: none;
+}
+
+@keyframes count {
+  from { transform: scale(1.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ---- touch controls and footer ----------------------------------------- */
+
+.dpad {
+  display: none;
+  grid-template-columns: repeat(3, 64px);
+  grid-template-rows: repeat(2, 56px);
+  gap: 8px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.dpad button {
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  font-size: 1.2rem;
+  touch-action: manipulation;
+}
+
+.dpad button:active {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.dpad [data-dir="up"] { grid-column: 2; grid-row: 1; }
+.dpad [data-dir="left"] { grid-column: 1; grid-row: 2; }
+.dpad [data-dir="down"] { grid-column: 2; grid-row: 2; }
+.dpad [data-dir="right"] { grid-column: 3; grid-row: 2; }
+.dpad [data-boost] { grid-column: 3; grid-row: 1; color: var(--accent); }
+
+.help {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 16px;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.help kbd {
+  margin: 0 1px;
+  color: var(--ink);
+}
+
+@media (pointer: coarse) {
+  .dpad {
+    display: grid;
+  }
+
+  .help {
+    display: none;
+  }
+
+  .app {
+    width: min(100%, 560px, calc(100vh - 330px));
+    width: min(100%, 560px, calc(100dvh - 330px));
+  }
+}
+
+@media (max-width: 420px) {
+  .stat {
+    padding: 6px 8px;
+  }
+
+  .stat-value {
+    font-size: 1.05rem;
+  }
+
+  .stat-main .stat-value {
+    font-size: 1.3rem;
+  }
+
+  .results {
+    grid-template-columns: repeat(2, auto);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title,
+  .badge,
+  .count.tick,
+  .stat-value.bump,
+  .overlay {
+    animation: none;
+  }
+}
